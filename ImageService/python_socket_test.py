@@ -1,13 +1,17 @@
+#See import notes in SocketServer.py
 from SocketServer import face_comparison,SSL_ThreadingTCPServer
 import numpy as np
-
 import time
 
+#Tests for SocketServer.py functions
 
+#Testing class for face_compar functions
 class face_comparisonTest:
-
+    
+    #Test for find_matches function of face_comparison class
     class face_comparison_find_matchesTest:
-        # can be the same for each
+        #Can be the same for each
+        #Sample image file location
         search_pt_pic = 'C:\\Users\\medley\\Desktop\\p\\theo_pic.jpg'
         pt_id = []
         all_face_encodings = []
@@ -24,7 +28,9 @@ class face_comparisonTest:
             #print(self.faces_in_img_err)
             #print(self.matching_patient_ids)
             #print(self.encoding_to_return)
-        
+    
+    
+    #Test for constructor init function of face_comparison class
     class face_comparison_initTest:
         # can be the same for each
         pt_id = []
@@ -44,8 +50,11 @@ class face_comparisonTest:
             #print(self.matching_patient_ids)
             #print(self.encoding_to_return)
 
+#Testing for SSL_TCPServer and SSL_ThreadingTCPServer classes
+
 class SocketServerTest:
     
+    #Test for find_matches function of face_comparison class
     def __init__(self, host, port,certfile,keyfile):
         self.result = SSL_ThreadingTCPServer((host,port),
         certfile,
@@ -53,13 +62,13 @@ class SocketServerTest:
         print("Starting server now")
         self.error = self.result.error
         
-      
+#Test image file locations
 search_pt_pic_good_1 = 'C:\\Users\\medley\\Desktop\\p\\theo_pic.jpg'
 search_pt_pic_bad_1 = ''
 search_pt_pic_bad_2 = 'C:\\Images\\Input\\harrymeghan.jpg'
 search_pt_pic_bad_3 = 'C:\\Images\\Input\\ranger.jpg'
 
-
+#Test correct encoding format
 search_face_encoding_good_1 = np.array([-0.15382788 , 0.00816037 , 0.0538962 , -0.05175451 , -0.14083922 , 0.07377105,
 -0.10023099 , -0.04121803 , 0.1347629   , -0.1213267  , 0.14709429  , 0.09005648,
 -0.15921442 , -0.01715159 , -0.05823774 , 0.07480818  , -0.10787214 ,- 0.07707427,
@@ -83,8 +92,7 @@ search_face_encoding_good_1 = np.array([-0.15382788 , 0.00816037 , 0.0538962 , -
 0.08611859  , -0.03215224 , -0.12480718 , -0.01073789 , -0.03434595 , -0.12347004,
 0.02106265  , 0.01916024])
 
-
-
+#Test incorrect encoding format
 search_face_encoding_bad_1 = np.array([2000000,2000000,2000000,2000000,2000000,2000000,2000000,
                               2000000,2000000,2000000,2000000,2000000,2000000,2000000,
                               2000000,2000000,2000000,2000000,2000000,2000000,2000000,
@@ -113,50 +121,69 @@ print("External test results:")
 print(result.faces_in_img_err)
 print(result.encoding_to_return)
 print(result.matching_patient_ids)
+#Test correct number of faces identified
 assert result.faces_in_img_err == 1
+#Test correct encoding format
 assert result.encoding_to_return.shape == (128,)
+#Test correct patient ID match
 assert result.matching_patient_ids == [14411]
 
 print("Test 2")
 result = face_comparisonTest.face_comparison_find_matchesTest(search_face_encoding_bad_1,optOut)
+#Test correct number of faces identified
 assert result.faces_in_img_err == 1
+#Test correct encoding format
 assert result.encoding_to_return.shape == (128,)
+#Test correct patient ID match
 assert result.matching_patient_ids == [0]
 
 print("Test 3")
 result = face_comparisonTest.face_comparison_initTest(search_pt_pic_good_1,optOut)
+#Test correct number of faces identified
 assert result.faces_in_img_err == 1
+#Test correct encoding format
 assert result.encoding_to_return.shape == (128,)
+#Test correct patient ID match
 assert result.matching_patient_ids == [14411]
 
 print("Test 4")
 result = face_comparisonTest.face_comparison_initTest(search_pt_pic_bad_1,optOut)
+#Test correct number of faces identified
 assert result.faces_in_img_err == 3
 print(np.array(result.encoding_to_return).size)
+#Test correct encoding format
 assert np.array(result.encoding_to_return).size == 1
+#Test correct patient ID match
 assert result.matching_patient_ids == [0]
 
 print("Test 5")
 result = face_comparisonTest.face_comparison_initTest(search_pt_pic_bad_2,optOut)
+#Test correct number of faces identified
 assert result.faces_in_img_err == 2
 print(np.array(result.encoding_to_return).size)
+#Test correct encoding format
 assert np.array(result.encoding_to_return).size == 1
+#Test correct patient ID match
 assert result.matching_patient_ids == [0]
 
 print("Test 6")
 result = face_comparisonTest.face_comparison_initTest(search_pt_pic_bad_3,optOut)
+#Test correct number of faces identified
 assert result.faces_in_img_err == 0
 print(np.array(result.encoding_to_return).size)
+#Test correct encoding format
 assert np.array(result.encoding_to_return).size == 1
+#Test correct patient ID match
 assert result.matching_patient_ids == [0]
 
 
-
+#Sample good and bad host and port inputs
 good_host = 'localhost'
 good_port = 5063
 bad_host = '192.168.1.107'
 bad_port = 999999
 
+#Sample good and bad cert and key file inputs
 good_certfile = "cert.pem"
 bad_certfile = "no_cert.pem"
 bad_certfile_2 = "bad_cert.pem"
@@ -164,7 +191,7 @@ good_keyfile = "private.key"
 bad_keyfile = "no_key.key"
 bad_keyfile_2 = "bad_key.key"
 
-
+#Test response to good and bad host and port inputs
 print("Test 7: Bad port")
 bad_server = SocketServerTest(good_host, bad_port,good_certfile,good_keyfile)
 time.sleep(2)
@@ -184,6 +211,8 @@ assert bad_server3.error == "bad port, closing"
 bad_server3.result.server_close()
 
 print("Server Tests Complete")
+
+#Test response to good and bad cert and key file inputs
 print("Please use the following server configurations to test clients")
 print("Test 10")
 bad_server4 = SocketServerTest(good_host, good_port,bad_certfile,good_keyfile)
